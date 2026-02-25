@@ -66,3 +66,11 @@
 - [ ] Criar checkpoint final
 - [ ] Preparar instruções de uso
 - [ ] Documentar credenciais padrão
+
+
+## Correções Solicitadas
+- [x] Corrigir bugs identificados no aplicativo
+- [x] Implementar edição de receita com persistência no banco de dados
+- [x] Remover credenciais de demonstração da página de login
+- [x] Limpar banco de dados (remover dados de exemplo)
+- [x] Validar todas as funcionalidades após correções

@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, clients, products, quotations, notes } from "../drizzle/schema";
+import { InsertUser, users, clients, products, quotations, notes, settings } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -231,4 +231,23 @@ export async function deleteNote(id: number) {
   if (!db) return null;
   const result = await db.delete(notes).where(eq(notes.id, id));
   return result;
+}
+
+// Settings queries
+export async function getSetting(key: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(settings).where(eq(settings.key, key)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function setSetting(key: string, value: string) {
+  const db = await getDb();
+  if (!db) return null;
+  const existing = await getSetting(key);
+  if (existing) {
+    return db.update(settings).set({ value }).where(eq(settings.key, key));
+  } else {
+    return db.insert(settings).values({ key, value });
+  }
 }

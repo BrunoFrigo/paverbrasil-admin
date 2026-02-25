@@ -90,17 +90,7 @@ export default function Login() {
                 {isLoading ? 'Entrando...' : 'Entrar'}
               </Button>
             </form>
-            <div className="mt-6 pt-6 border-t border-border">
-              <p className="text-xs text-muted-foreground text-center">
-                Credenciais de demonstração:
-              </p>
-              <p className="text-xs text-muted-foreground text-center mt-2">
-                Usuário: <span className="font-mono">claudineifrigo</span>
-              </p>
-              <p className="text-xs text-muted-foreground text-center">
-                Senha: <span className="font-mono">paverbrasil2026</span>
-              </p>
-            </div>
+
           </CardContent>
         </Card>
       </div>

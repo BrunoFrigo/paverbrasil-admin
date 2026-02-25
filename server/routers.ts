@@ -212,6 +212,21 @@ export const appRouter = router({
         return deleteNote(input.id);
       }),
   }),
+
+  settings: router({
+    getRevenue: protectedProcedure.query(async () => {
+      const { getSetting } = await import('./db');
+      const setting = await getSetting('totalRevenue');
+      return { totalRevenue: setting ? parseFloat(setting.value) : 0 };
+    }),
+    setRevenue: protectedProcedure
+      .input(z.object({ totalRevenue: z.number() }))
+      .mutation(async ({ input }) => {
+        const { setSetting } = await import('./db');
+        await setSetting('totalRevenue', input.totalRevenue.toString());
+        return { success: true };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

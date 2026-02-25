@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { DollarSign, ShoppingCart, Users, Package } from 'lucide-react';
 import { toast } from 'sonner';
+import { trpc } from '@/lib/trpc';
 
 const chartData = [
   { month: 'Jan', vendas: 4000 },
@@ -17,20 +18,42 @@ const chartData = [
 ];
 
 export default function Dashboard() {
-  const [totalRevenue, setTotalRevenue] = useState(15000);
   const [isEditingRevenue, setIsEditingRevenue] = useState(false);
-  const [revenueInput, setRevenueInput] = useState(totalRevenue.toString());
+  const [revenueInput, setRevenueInput] = useState('0');
+  
+  const { data: revenueData, isLoading: isLoadingRevenue, refetch: refetchRevenue } = trpc.settings.getRevenue.useQuery();
+  const setRevenueMutation = trpc.settings.setRevenue.useMutation();
+  
+  const { data: clients = [] } = trpc.clients.list.useQuery();
+  const { data: products = [] } = trpc.products.list.useQuery();
+  const { data: quotations = [] } = trpc.quotations.list.useQuery();
 
-  const handleSaveRevenue = () => {
+  useEffect(() => {
+    if (revenueData) {
+      setRevenueInput(revenueData.totalRevenue.toString());
+    }
+  }, [revenueData]);
+
+  const handleSaveRevenue = async () => {
     const value = parseFloat(revenueInput);
     if (!isNaN(value) && value >= 0) {
-      setTotalRevenue(value);
-      setIsEditingRevenue(false);
-      toast.success('Receita atualizada com sucesso!');
+      try {
+        await setRevenueMutation.mutateAsync({ totalRevenue: value });
+        toast.success('Receita atualizada com sucesso!');
+        setIsEditingRevenue(false);
+        refetchRevenue();
+      } catch (error: any) {
+        toast.error(error.message || 'Erro ao atualizar receita');
+      }
     } else {
       toast.error('Valor inválido');
     }
   };
+
+  const totalRevenue = revenueData?.totalRevenue || 0;
+  const totalOrders = quotations.length;
+  const activeClients = clients.length;
+  const totalProducts = products.length;
 
   const kpis = [
     {
@@ -42,19 +65,19 @@ export default function Dashboard() {
     },
     {
       title: 'Total de Pedidos',
-      value: '24',
+      value: totalOrders.toString(),
       icon: ShoppingCart,
       color: 'bg-blue-500',
     },
     {
       title: 'Clientes Ativos',
-      value: '12',
+      value: activeClients.toString(),
       icon: Users,
       color: 'bg-green-500',
     },
     {
       title: 'Produtos',
-      value: '8',
+      value: totalProducts.toString(),
       icon: Package,
       color: 'bg-purple-500',
     },
@@ -81,14 +104,16 @@ export default function Dashboard() {
                       value={revenueInput}
                       onChange={(e) => setRevenueInput(e.target.value)}
                       className="bg-background border-border text-foreground"
+                      placeholder="0.00"
                     />
                     <div className="flex gap-2">
                       <Button
                         size="sm"
                         onClick={handleSaveRevenue}
+                        disabled={setRevenueMutation.isPending}
                         className="bg-accent hover:bg-accent/90 text-accent-foreground"
                       >
-                        Salvar
+                        {setRevenueMutation.isPending ? 'Salvando...' : 'Salvar'}
                       </Button>
                       <Button
                         size="sm"
@@ -104,7 +129,9 @@ export default function Dashboard() {
                     onClick={() => kpi.editable && setIsEditingRevenue(true)}
                     className={kpi.editable ? 'cursor-pointer hover:opacity-80' : ''}
                   >
-                    <div className="text-2xl font-bold text-foreground">{kpi.value}</div>
+                    <div className="text-2xl font-bold text-foreground">
+                      {isLoadingRevenue && kpi.editable ? 'Carregando...' : kpi.value}
+                    </div>
                     {kpi.editable && (
                       <p className="text-xs text-muted-foreground mt-1">Clique para editar</p>
                     )}
@@ -150,7 +177,7 @@ export default function Dashboard() {
           <CardContent>
             <div className="space-y-4">
               <div className="text-center py-8 text-muted-foreground">
-                Nenhum orçamento registrado ainda
+                {quotations.length === 0 ? 'Nenhum orçamento registrado ainda' : `${quotations.length} orçamento(s) no total`}
               </div>
             </div>
           </CardContent>
