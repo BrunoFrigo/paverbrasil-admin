@@ -1,0 +1,1 @@
+ALTER TABLE `quotations` MODIFY COLUMN `deliveryValue` decimal(10,2) NOT NULL DEFAULT '0';
