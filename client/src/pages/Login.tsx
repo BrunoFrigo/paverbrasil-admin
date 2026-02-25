@@ -11,6 +11,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [, setLocation] = useLocation();
+  const utils = trpc.useUtils();
   const loginMutation = trpc.auth.login.useMutation();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -30,6 +31,10 @@ export default function Login() {
 
       if (result.success) {
         toast.success('Login realizado com sucesso!');
+        // Invalidar cache da query auth.me para forçar refetch
+        await utils.auth.me.invalidate();
+        // Aguardar um pouco para garantir que a sessão foi estabelecida
+        await new Promise(resolve => setTimeout(resolve, 500));
         setLocation('/dashboard');
       }
     } catch (error: any) {
