@@ -175,3 +175,7 @@
     }
   }
 }
+
+#manus-badge { 
+  display: none !important; 
+}
