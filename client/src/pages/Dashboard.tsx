@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,18 +8,20 @@ import { DollarSign, ShoppingCart, Users, Package } from 'lucide-react';
 import { toast } from 'sonner';
 import { trpc } from '@/lib/trpc';
 
-const chartData = [
-  { month: 'Jan', vendas: 4000 },
-  { month: 'Fev', vendas: 3000 },
-  { month: 'Mar', vendas: 2000 },
-  { month: 'Abr', vendas: 2780 },
-  { month: 'Mai', vendas: 1890 },
-  { month: 'Jun', vendas: 2390 },
+// Dados padrão para o gráfico (vazio)
+const defaultChartData = [
+  { month: 'Jan', vendas: 0 },
+  { month: 'Fev', vendas: 0 },
+  { month: 'Mar', vendas: 0 },
+  { month: 'Abr', vendas: 0 },
+  { month: 'Mai', vendas: 0 },
+  { month: 'Jun', vendas: 0 },
 ];
 
 export default function Dashboard() {
   const [isEditingRevenue, setIsEditingRevenue] = useState(false);
   const [revenueInput, setRevenueInput] = useState('0');
+  const [chartData, setChartData] = useState(defaultChartData);
   
   const { data: revenueData, isLoading: isLoadingRevenue, refetch: refetchRevenue } = trpc.settings.getRevenue.useQuery();
   const setRevenueMutation = trpc.settings.setRevenue.useMutation();
@@ -33,6 +35,17 @@ export default function Dashboard() {
       setRevenueInput(revenueData.totalRevenue.toString());
     }
   }, [revenueData]);
+
+  // Atualizar gráfico quando quotations mudar
+  useEffect(() => {
+    if (quotations.length === 0) {
+      setChartData(defaultChartData);
+    } else {
+      // Se houver pedidos, poderia processar dados reais aqui
+      // Por enquanto, mantém vazio
+      setChartData(defaultChartData);
+    }
+  }, [quotations]);
 
   const handleSaveRevenue = async () => {
     const value = parseFloat(revenueInput);
