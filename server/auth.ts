@@ -73,6 +73,7 @@ export async function initializeAdminUser() {
 
     const passwordHash = await hashPassword(ADMIN_PASSWORD);
     await db.insert(users).values({
+      openId: 'local-admin-user',
       username: ADMIN_USERNAME,
       passwordHash,
       name: 'Administrador PaverBrasil',

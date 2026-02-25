@@ -24,9 +24,12 @@ export const appRouter = router({
           throw new Error('Invalid username or password');
         }
 
+        // Use existing openId or generate one
+        const openId = user.openId || `local-user-${user.id}`;
+
         // Create session token using SDK
         const sessionToken = await sdk.createSessionToken(
-          user.openId || `local-${user.id}`,
+          openId,
           { name: user.name || 'Admin' }
         );
 
