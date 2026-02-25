@@ -3,6 +3,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { authenticateUser, initializeAdminUser } from "./auth";
+import { sdk } from "./_core/sdk";
 import { z } from "zod";
 
 export const appRouter = router({
@@ -23,9 +24,15 @@ export const appRouter = router({
           throw new Error('Invalid username or password');
         }
 
-        // Create session cookie
+        // Create session token using SDK
+        const sessionToken = await sdk.createSessionToken(
+          user.openId || `local-${user.id}`,
+          { name: user.name || 'Admin' }
+        );
+
+        // Set session cookie
         const cookieOptions = getSessionCookieOptions(ctx.req);
-        ctx.res.cookie(COOKIE_NAME, user.id.toString(), cookieOptions);
+        ctx.res.cookie(COOKIE_NAME, sessionToken, cookieOptions);
 
         return {
           success: true,
