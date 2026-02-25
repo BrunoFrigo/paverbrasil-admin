@@ -4,6 +4,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Clientes from "./pages/Clientes";
@@ -12,15 +13,34 @@ import Pedidos from "./pages/Pedidos";
 import Anotacoes from "./pages/Anotacoes";
 
 function Router() {
-  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path={"/login"} component={Login} />
-      <Route path={"/dashboard"} component={Dashboard} />
-      <Route path={"/clientes"} component={Clientes} />
-      <Route path={"/produtos"} component={Produtos} />
-      <Route path={"/pedidos"} component={Pedidos} />
-      <Route path={"/anotacoes"} component={Anotacoes} />
+      <Route path={"/dashboard"}>
+        <ProtectedRoute>
+          <Dashboard />
+        </ProtectedRoute>
+      </Route>
+      <Route path={"/clientes"}>
+        <ProtectedRoute>
+          <Clientes />
+        </ProtectedRoute>
+      </Route>
+      <Route path={"/produtos"}>
+        <ProtectedRoute>
+          <Produtos />
+        </ProtectedRoute>
+      </Route>
+      <Route path={"/pedidos"}>
+        <ProtectedRoute>
+          <Pedidos />
+        </ProtectedRoute>
+      </Route>
+      <Route path={"/anotacoes"}>
+        <ProtectedRoute>
+          <Anotacoes />
+        </ProtectedRoute>
+      </Route>
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={Login} />

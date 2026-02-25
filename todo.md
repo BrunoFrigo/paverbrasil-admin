@@ -74,3 +74,9 @@
 - [x] Remover credenciais de demonstração da página de login
 - [x] Limpar banco de dados (remover dados de exemplo)
 - [x] Validar todas as funcionalidades após correções
+
+## Correção de Autenticação (Segunda Rodada)
+- [x] Criar componente ProtectedRoute para proteger rotas
+- [x] Implementar verificação de autenticação nas rotas do painel
+- [x] Evitar redirecionamento para OAuth quando já autenticado
+- [x] Validar fluxo de autenticação com testes
