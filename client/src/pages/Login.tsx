@@ -50,9 +50,7 @@ export default function Login() {
         <Card className="border-border">
           <CardHeader className="space-y-2 text-center">
             <div className="flex justify-center mb-4">
-              <div className="w-12 h-12 bg-accent rounded-lg flex items-center justify-center">
-                <span className="text-accent-foreground font-bold text-xl">PB</span>
-              </div>
+              <img src="/logo-paverbrasil.png" alt="PaverBrasil" className="w-16 h-16 object-contain" />
             </div>
             <CardTitle className="text-2xl">PaverBrasil Admin</CardTitle>
             <CardDescription>Acesso exclusivo para administradores</CardDescription>

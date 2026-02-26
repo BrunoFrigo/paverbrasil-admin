@@ -53,9 +53,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         {/* Logo */}
         <div className="p-6 border-b border-border">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-accent rounded-lg flex items-center justify-center">
-              <span className="text-accent-foreground font-bold text-lg">PB</span>
-            </div>
+            <img src="/logo-paverbrasil.png" alt="PaverBrasil" className="w-12 h-12 object-contain" />
             <div>
               <h1 className="font-bold text-lg text-foreground">PaverBrasil</h1>
               <p className="text-xs text-muted-foreground">Admin</p>
