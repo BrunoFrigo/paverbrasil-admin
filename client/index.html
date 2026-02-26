@@ -16,7 +16,9 @@
       a:has(svg[data-icon*="manus"]),
       button:has(svg[data-icon*="manus"]),
       div:has(svg[data-icon*="manus"]),
-      span:has(svg[data-icon*="manus"]) {
+      span:has(svg[data-icon*="manus"]),
+      *:has(> svg[viewBox*="24"]),
+      [style*="position: fixed"][style*="bottom"][style*="right"] {
         display: none !important;
         visibility: hidden !important;
         opacity: 0 !important;
@@ -34,20 +36,40 @@
     </style>
     <script>
       (function() {
+        // Interceptar appendChild e insertBefore para bloquear o badge
+        const originalAppendChild = Element.prototype.appendChild;
+        const originalInsertBefore = Element.prototype.insertBefore;
+        
+        const isBadge = (node) => {
+          if (node.nodeType !== 1) return false;
+          const html = node.outerHTML || '';
+          const text = node.textContent || '';
+          return (
+            html.includes('manus') ||
+            text.includes('Made with Manus') ||
+            node.id?.includes('manus') ||
+            node.className?.includes('manus') ||
+            node.dataset?.testid?.includes('manus')
+          );
+        };
+        
+        Element.prototype.appendChild = function(node) {
+          if (isBadge(node)) return node;
+          return originalAppendChild.call(this, node);
+        };
+        
+        Element.prototype.insertBefore = function(node, ref) {
+          if (isBadge(node)) return node;
+          return originalInsertBefore.call(this, node, ref);
+        };
+        
+        // Remover badges existentes continuamente
         const removeAllManusBadges = () => {
           try {
-            // Remover por ID
-            const badgeById = document.getElementById('manus-badge');
-            if (badgeById) badgeById.remove();
-            
-            // Remover por seletores
             document.querySelectorAll('[id*="manus"], [class*="manus"], [data-testid*="manus"]').forEach(el => {
-              try {
-                el.remove();
-              } catch (e) {}
+              try { el.remove(); } catch (e) {}
             });
             
-            // Remover elementos que contenham "Made with Manus"
             document.querySelectorAll('*').forEach(el => {
               try {
                 if (el.textContent && el.textContent.trim() === 'Made with Manus') {
@@ -58,10 +80,8 @@
           } catch (e) {}
         };
         
-        // Executar imediatamente
         removeAllManusBadges();
         
-        // Observar mudanças no DOM
         if (typeof MutationObserver !== 'undefined') {
           const observer = new MutationObserver(() => {
             setTimeout(removeAllManusBadges, 50);
@@ -69,8 +89,7 @@
           observer.observe(document.documentElement, { childList: true, subtree: true });
         }
         
-        // Executar periodicamente como fallback
-        setInterval(removeAllManusBadges, 200);
+        setInterval(removeAllManusBadges, 150);
       })();
     </script>
     <!-- THIS IS THE START OF A COMMENT BLOCK, BLOCK TO BE DELETED: Google Fonts here, example:
