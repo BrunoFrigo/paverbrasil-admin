@@ -8,30 +8,69 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     <title>PaverBrasil Admin</title>
     <link rel="icon" type="image/png" href="/logo-paverbrasil.png" />
+    <style>
+      /* Bloquear qualquer elemento que possa ser o badge Manus */
+      [id*="manus"],
+      [class*="manus"],
+      [data-testid*="manus"],
+      a:has(svg[data-icon*="manus"]),
+      button:has(svg[data-icon*="manus"]),
+      div:has(svg[data-icon*="manus"]),
+      span:has(svg[data-icon*="manus"]) {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        width: 0 !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        position: fixed !important;
+        left: -9999px !important;
+        top: -9999px !important;
+        z-index: -9999 !important;
+        pointer-events: none !important;
+      }
+    </style>
     <script>
       (function() {
         const removeAllManusBadges = () => {
-          const elements = document.querySelectorAll('[id*="manus"], [class*="manus"], [data-testid*="manus"]');
-          elements.forEach(el => el.remove());
-          
-          const allElements = document.querySelectorAll('*');
-          allElements.forEach(el => {
-            if (el.textContent && el.textContent.trim() === 'Made with Manus') {
-              el.remove();
-            }
-          });
+          try {
+            // Remover por ID
+            const badgeById = document.getElementById('manus-badge');
+            if (badgeById) badgeById.remove();
+            
+            // Remover por seletores
+            document.querySelectorAll('[id*="manus"], [class*="manus"], [data-testid*="manus"]').forEach(el => {
+              try {
+                el.remove();
+              } catch (e) {}
+            });
+            
+            // Remover elementos que contenham "Made with Manus"
+            document.querySelectorAll('*').forEach(el => {
+              try {
+                if (el.textContent && el.textContent.trim() === 'Made with Manus') {
+                  el.remove();
+                }
+              } catch (e) {}
+            });
+          } catch (e) {}
         };
         
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', removeAllManusBadges);
-        } else {
-          removeAllManusBadges();
+        // Executar imediatamente
+        removeAllManusBadges();
+        
+        // Observar mudanças no DOM
+        if (typeof MutationObserver !== 'undefined') {
+          const observer = new MutationObserver(() => {
+            setTimeout(removeAllManusBadges, 50);
+          });
+          observer.observe(document.documentElement, { childList: true, subtree: true });
         }
         
-        const observer = new MutationObserver(removeAllManusBadges);
-        observer.observe(document.documentElement, { childList: true, subtree: true });
-        
-        setInterval(removeAllManusBadges, 300);
+        // Executar periodicamente como fallback
+        setInterval(removeAllManusBadges, 200);
       })();
     </script>
     <!-- THIS IS THE START OF A COMMENT BLOCK, BLOCK TO BE DELETED: Google Fonts here, example:
