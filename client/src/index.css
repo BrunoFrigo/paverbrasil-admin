@@ -177,7 +177,10 @@
 }
 
 /* Remove Manus badge completamente */
-#manus-badge {
+#manus-badge,
+[id*="manus"],
+[class*="manus"],
+[data-testid="manus-badge"] {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
@@ -187,8 +190,7 @@
   margin: 0 !important;
   padding: 0 !important;
   border: 0 !important;
-}
-
-span:has(svg) {
-  display: none !important;
+  position: fixed !important;
+  left: -9999px !important;
+  top: -9999px !important;
 }
