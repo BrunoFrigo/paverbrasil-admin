@@ -6,7 +6,7 @@ import path from "node:path";
 import { defineConfig, type Plugin, type ViteDevServer } from "vite";
 
 // =============================================================================
-// Manus Debug Collector - (mantido)
+// Manus Debug Collector
 // =============================================================================
 
 const PROJECT_ROOT = import.meta.dirname;
@@ -95,6 +95,7 @@ function vitePluginManusDebugCollector(): Plugin {
         req.on("end", () => {
           try {
             const payload = JSON.parse(body);
+
             if (payload.consoleLogs?.length > 0) {
               writeToLogFile("browserConsole", payload.consoleLogs);
             }
@@ -121,7 +122,7 @@ const plugins = [
   react(),
   tailwindcss(),
   jsxLocPlugin(),
-  vitePluginManusDebugCollector(), // runtime removido (era o que criava o badge)
+  vitePluginManusDebugCollector(),
 ];
 
 export default defineConfig({
@@ -137,7 +138,7 @@ export default defineConfig({
   root: path.resolve(import.meta.dirname, "client"),
   publicDir: path.resolve(import.meta.dirname, "client", "public"),
   build: {
-    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    outDir: path.resolve(import.meta.dirname, "dist"),
     emptyOutDir: true,
   },
   server: {

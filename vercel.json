@@ -1,0 +1,7 @@
+{
+  "buildCommand": "vite build",
+  "outputDirectory": "dist",
+  "framework": "vite"
+}git add .
+git commit -m "fix vercel config"
+git push

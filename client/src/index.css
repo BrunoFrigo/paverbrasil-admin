@@ -176,6 +176,6 @@
   }
 }
 
-#manus-badge { 
-  display: none !important; 
+span:has(svg) {
+  display: none !important;
 }
