@@ -1,9 +1,5 @@
 {
   "buildCommand": "pnpm build",
   "outputDirectory": "dist",
-  "framework": "other",
-  "env": {
-    "DATABASE_URL": "@database_url",
-    "JWT_SECRET": "@jwt_secret"
-  }
+  "framework": "other"
 }
