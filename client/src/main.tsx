@@ -8,6 +8,28 @@ import App from "./App";
 import { getLoginUrl } from "./const";
 import "./index.css";
 
+// Remover badge "Made with Manus"
+if (typeof document !== 'undefined') {
+  const removeManusBadge = () => {
+    const badge = document.querySelector('[data-testid="manus-badge"], [id*="manus"], [class*="manus"]');
+    if (badge) {
+      badge.remove();
+    }
+    // Remover por seletor mais específico
+    const allElements = document.querySelectorAll('*');
+    allElements.forEach(el => {
+      if (el.textContent?.includes('Made with Manus')) {
+        el.remove();
+      }
+    });
+  };
+  
+  // Executar imediatamente e depois observar mudanças
+  removeManusBadge();
+  const observer = new MutationObserver(removeManusBadge);
+  observer.observe(document.body, { childList: true, subtree: true });
+}
+
 const queryClient = new QueryClient();
 
 const redirectToLoginIfUnauthorized = (error: unknown) => {
